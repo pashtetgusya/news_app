@@ -6,24 +6,28 @@
 //
 
 import UIKit
+import WebKit
 
-class NewsInfoController: UIViewController {
+class NewsInfoController: UIViewController, WKNavigationDelegate {
+    
+    lazy var newsInfoView = NewsInfoView()
+    
+    var newsUrlString: String = ""
 
+    override func loadView() {
+        self.view = newsInfoView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        guard let newsUrl = URL(string: newsUrlString) else {
+            return
+        }
+        
+        let newsUrlRequest = URLRequest(url: newsUrl)
+        self.newsInfoView.newsWebView.load(newsUrlRequest)
+        self.newsInfoView.newsWebView.allowsBackForwardNavigationGestures = true
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

@@ -14,7 +14,11 @@ class NewsListController: UIViewController, UITableViewDelegate, UITableViewData
     private let networkManager = NetworkManager()
     private let newsStorage = NewsStorage()
     
-    private var newsFromStorage: [NewsInfo] = []
+    private var newsFromStorage: [NewsInfo] = [] {
+        didSet {
+            self.newsListView.newsTableView.reloadData()
+        }
+    }
         
     override func loadView() {
         self.view = newsListView
@@ -75,14 +79,15 @@ class NewsListController: UIViewController, UITableViewDelegate, UITableViewData
         guard let newsUrlString = newsFromStorage[indexPath.row].url else {
             return
         }
-        guard let newsUrl = URL(string: newsUrlString) else {
-            return
-        }
         
-        UIApplication.shared.open(newsUrl)
         newsFromStorage[indexPath.row].countView! += 1
         self.newsStorage.updateNewsInStorage(news: newsFromStorage)
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let newsInfoController = NewsInfoController()
+        newsInfoController.newsUrlString = newsUrlString
+        
+        self.present(newsInfoController, animated: true)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
